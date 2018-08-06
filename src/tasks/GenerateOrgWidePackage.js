@@ -9,11 +9,11 @@ var folderMetadata = ['DocumentFolder','EmailFolder','ReportFolder','DashboardFo
 exports.allMetadataXML = function(){
     jsforce.createConnection(username,password).
     then(function(userinfo){
-        if(!fs.existsSync('/Users/gaurav/devops/src/utils/MetadataMappingV'+43+'.json')){
+        if(!fs.existsSync('../utils/MetadataMappingV'+43+'.json')){
             return jsforce.describeMetadata('43.0');
         }
         else{
-            return fileIO.readFile('/Users/gaurav/devops/src/utils/MetadataMappingV'+43+'.json');
+            return fileIO.readFile('../utils/MetadataMappingV'+43+'.json');
         }
     }).
     then(function(response){
@@ -32,16 +32,16 @@ exports.allMetadataXML = function(){
     }).
     then(function(response){
         this.mappingData = JSON.parse(response);
-        if(fs.existsSync('PackageXml'+username+'.json')){
-            return fileIO.readFile('PackageXml'+username+'.json');
+        if(fs.existsSync('PackageXml-'+username+'.json')){
+            return fileIO.readFile('PackageXml-'+username+'.json');
         }
         else{
-            console.log('Extracting Folders',folderMetadata);
+            console.log('Extracting Folders');
             return jsforce.listMetadata(folderMetadata);
         }
     }).
     then(function(response){
-        if(!fs.existsSync('PackageXml'+username+'.json')){
+        if(!fs.existsSync('PackageXml-'+username+'.json')){
             console.log('fetching all parent metadata');
             return jsforce.listMetadata(this.mappingData,response);
         }
@@ -50,13 +50,13 @@ exports.allMetadataXML = function(){
         }
     }).
     then(function(response){
-        if(fs.existsSync('PackageXml'+username+'.json')){
+        if(fs.existsSync('PackageXml-'+username+'.json')){
             this.parentMetadataRecords = JSON.parse(response);
         }
         else{
             this.parentMetadataRecords = response;
             console.log('saving parent metadata records..');
-            return fileIO.saveFileContent('PackageXml'+username+'.json',JSON.stringify(response));
+            return fileIO.saveFileContent('PackageXml-'+username+'.json',JSON.stringify(response));
         }
     }).
     then(function(response){
@@ -76,7 +76,6 @@ exports.allMetadataXML = function(){
         this.parentMetadataRecords['CustomObject'].forEach(objRec => {
             objectMap[objRec.id] = objRec.fullName;
         });
-        console.log(objectMap);
         var parentMetadataRecs = {};
         Object.keys(this.parentMetadataRecords).forEach(metadataName => {
             if(this.parentMetadataRecords[metadataName] != 'test'){
@@ -93,7 +92,7 @@ exports.allMetadataXML = function(){
         });
         var newItem = Object.assign({}, parentMetadataRecs,this.childRecords);
         console.log('Final Moving With Child');
-        return fileIO.saveFileContent('PackageXmlChild'+username+'.json',JSON.stringify(newItem));
+        return fileIO.saveFileContent('PackageXmlChild-'+username+'.json',JSON.stringify(newItem));
     }).
     then(function(response){
         let xmlString = fileIO.convertToXML(JSON.parse(response));

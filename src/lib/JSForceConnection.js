@@ -46,11 +46,9 @@ class JSForce{
             var metadataMappingArray = Array.isArray(metadataMapping) ? metadataMapping : Object.keys(metadataMapping);
             metadataMappingArray.forEach(metadataType => {
                 var types = [];
-                console.log(metadataType);
                 if(folderNamesMapping && folderNamesMapping[mapping['FolderMapping'][metadataType]]){
                     folderNamesMapping[mapping['FolderMapping'][metadataType]] = fileIO.converToArray(folderNamesMapping[mapping['FolderMapping'][metadataType]]);
                     folderNamesMapping[mapping['FolderMapping'][metadataType]].forEach(folderData => {
-                        console.log(folderData.fullName);
                         types.push({type: metadataType, folder: folderData.fullName });
                     });
                 }
@@ -98,7 +96,6 @@ class JSForce{
             let finishIndex = 0;
             parentMetadataList = fileIO.converToArray(parentMetadataList);
             parentMetadataList.forEach(metadataParent => {
-                console.log(metadataParent);
                 var parentsToRead = parentMetadataDetails[metadataParent];
                 var parentMetadataMap = {};
                 parentsToRead = fileIO.converToArray(parentsToRead);
