@@ -24,7 +24,7 @@ exports.allMetadataXML = function(){
                     metadataObjArray[element.xmlName] = element;
                 }
             });
-            return fileIO.saveFileContent('/Users/gaurav/devops/src/utils/MetadataMappingV'+43+'.json',JSON.stringify(metadataObjArray));
+            return fileIO.saveFileContent('../utils/MetadataMappingV'+43+'.json',JSON.stringify(metadataObjArray));
         }
         else{
             return response;
@@ -32,8 +32,8 @@ exports.allMetadataXML = function(){
     }).
     then(function(response){
         this.mappingData = JSON.parse(response);
-        if(fs.existsSync('PackageXml-'+username+'.json')){
-            return fileIO.readFile('PackageXml-'+username+'.json');
+        if(fs.existsSync('../data/PackageXml-'+username+'.json')){
+            return fileIO.readFile('../data/PackageXml-'+username+'.json');
         }
         else{
             console.log('Extracting Folders');
@@ -41,7 +41,7 @@ exports.allMetadataXML = function(){
         }
     }).
     then(function(response){
-        if(!fs.existsSync('PackageXml-'+username+'.json')){
+        if(!fs.existsSync('../data/PackageXml-'+username+'.json')){
             console.log('fetching all parent metadata');
             return jsforce.listMetadata(this.mappingData,response);
         }
@@ -50,13 +50,13 @@ exports.allMetadataXML = function(){
         }
     }).
     then(function(response){
-        if(fs.existsSync('PackageXml-'+username+'.json')){
+        if(fs.existsSync('../data/PackageXml-'+username+'.json')){
             this.parentMetadataRecords = JSON.parse(response);
         }
         else{
             this.parentMetadataRecords = response;
             console.log('saving parent metadata records..');
-            return fileIO.saveFileContent('PackageXml-'+username+'.json',JSON.stringify(response));
+            return fileIO.saveFileContent('../data/PackageXml-'+username+'.json',JSON.stringify(response));
         }
     }).
     then(function(response){
@@ -92,11 +92,11 @@ exports.allMetadataXML = function(){
         });
         var newItem = Object.assign({}, parentMetadataRecs,this.childRecords);
         console.log('Final Moving With Child');
-        return fileIO.saveFileContent('PackageXmlChild-'+username+'.json',JSON.stringify(newItem));
+        return fileIO.saveFileContent('../data/PackageXmlChild-'+username+'.json',JSON.stringify(newItem));
     }).
     then(function(response){
         let xmlString = fileIO.convertToXML(JSON.parse(response));
-        return fileIO.saveFileContent('Package.xml',xmlString);
+        return fileIO.saveFileContent('../data/Package.xml',xmlString);
     }).
     then(function(response){
         console.log('saved');
